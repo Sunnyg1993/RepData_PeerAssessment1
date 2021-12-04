@@ -18,7 +18,7 @@
 ## Q2. What is the average daily activity pattern?
 ### plot a histogram of total_steps by day
 ### ans: about 10% of the days appear to be no movement, steps = 0, might be due to monitor faliure(?). Otherwise, most of the days, about 9%, the activity takes 10000 steps in total. 
-![total_steps_daily.png](https://github.com/Sunnyg1993/RepData_PeerAssessment1/blob/master/total_steps_daily.png)
+![](https://github.com/Sunnyg1993/RepData_PeerAssessment1/blob/master/total_steps_daily.png)
 #
 ## Q3. Imputing missing values
 #
