@@ -1,107 +1,35 @@
 # Reproducible Research: Peer Assessment 1
 #
 ### load_packages
-Sys.setlocale("LC_TIME", "English")
-library(dplyr)
-library(lubridate)
-library(tidyr)
-library(ggplot2)
-library(lattice)
+#### packages used are: dplyr, lubridate, and ggplot2
 #
 ## 1. Loading and preprocessing the data
 #
-### 1.1 Download file
-download.file(url = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip", destfile = "activity.zip")
-# 
-### 1.2 Unzip file
-unzip("activity.zip")
+### Download file --> Unzip file --> load data use read.csv()
 #
-### 1.3 load data
-acts <- read.csv("activity.csv")
+### do check the data
 #
-### 1.4 check data
-str(acts)
-
-```
-
-### Process/transform the data
-
-```{r}
-# mutate date to the date format
-
-acts <- mutate(acts, dat = ymd(date))
-```
-
-## What is mean total number of steps taken per day?
-
-## The mean total number of steps taken per day is 9354.23.
-
-```{r}
-total_steps <- group_by(acts,dat) %>%
-  summarise(total_steps = sum(steps, na.rm = TRUE))
-summary(total_steps)
-
-```
-
-## What is the average daily activity pattern?
-
-## about 10% of the days appear to be no movement, steps = 0, might be due to monitor faliure(?). Otherwise, most of the days, about 9%, the activity takes 10000 steps in total. 
-
-```{r}
-#plot a histogram of total_steps by day
-g <- ggplot(total_steps, aes(total_steps))
-g + geom_histogram()+ggtitle("daily activity pattern")
-
-```
-
-## Imputing missing values
-
+### Process/transform the data: mutate date to the date format
+#
+## Q1: What is mean total number of steps taken per day?
+### group the data by dat and summarise by sum the steps, ignore the NAs, get the statistics of the data by summary()
+### ans: The mean total number of steps taken per day is 9354.
+#
+## Q2. What is the average daily activity pattern?
+### plot a histogram of total_steps by day
+### ans: about 10% of the days appear to be no movement, steps = 0, might be due to monitor faliure(?). Otherwise, most of the days, about 9%, the activity takes 10000 steps in total. 
+[total_steps_daily.png](https://github.com/Sunnyg1993/RepData_PeerAssessment1/blob/master/total_steps_daily.png)
+#
+## Q3. Imputing missing values
+#
 ### using mean of 5-minute interval for the missing value
-
-```{r}
-# get the mean of 5-minute interval 
-int_avg <- group_by(acts,interval)%>%
-  summarise(mean_steps = mean(steps, na.rm = TRUE))
-head(int_avg)
-
-#make a copy
-acts1 <- acts
-
-#give the missing steps of that interval the mean steps of that interval
-for (i in 1:nrow(acts1)){
-  t <- acts1$steps[i]
-  if (is.na(t)){
-    t_int <- acts1$interval[i]
-    t_step <- subset(int_avg,interval==t_int)
-    t <- t_step$mean_steps[1]
-    acts1$steps[i] <- t
-  } 
-}
-
-head(acts1)
-```
-
-
-## Are there differences in activity patterns between weekdays and weekends?
-
+### 1. get the mean of 5-minute interval by group() and summarise()
+### 2. give the missing steps of that interval the mean steps of that interval
+#
+## Q4. Are there differences in activity patterns between weekdays and weekends?
+#
+### 1. add a factor as weekends using factor()
+### 2. group the data by inerval and weekends
+### 3. plot the activity by intervals for weekdays and weekends using ggplot()
 ### ans: the activity peak hour on both weekdays and weekends appears around 8-9am. for the rest of the day, activities are more often in the afternoon and evening (especially around 8pm) on weekends. On weekdays, 5-8am and 6-7pm are quite busy, probably on the way to and back from work.
-
-```{r}
-#add a factor as weekends
-weekends <- c("Sat", "Sun")
-acts1$weekends <- factor((weekdays(acts1$dat,abbreviate = TRUE) %in% weekends),
-                        levels=c(FALSE, TRUE), 
-                        labels=c('weekdays','weekends'))
-
-head(acts1)
-#group the data by inerval and weekends
-acts1_st <- group_by(acts1,weekends,interval)%>%
-  summarise(avreage_steps = mean(steps))
-head(acts1_st)
-```
-
-```{r}
-#plot the activity by intervals for weekdays and weekends
-g <- ggplot(acts1_st, aes(x=interval, y=avreage_steps))
-g + geom_line(aes(color=weekends))
-```
+[activity_by_weekends.png](https://github.com/Sunnyg1993/RepData_PeerAssessment1/blob/master/activity_by_weekends.png)
