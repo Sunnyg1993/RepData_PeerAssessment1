@@ -41,7 +41,7 @@ acts <- mutate(acts, dat = ymd(date))
 
 ## What is mean total number of steps taken per day?
 
-## The mean total number of steps taken per day is 9354.23.
+## The mean total number of steps taken per day is 9354.
 
 ```{r}
 total_steps <- group_by(acts,dat) %>%
